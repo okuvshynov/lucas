@@ -1,0 +1,62 @@
+You will be given content for multiple files from code repository. It will be formatted as a list of entries like this:
+
+<input_file>
+<index>1</index>
+<path>path/filename</path>
+<content>
+Content here....
+</content>
+</input_file>
+<input_file>
+<index>2</index>
+<path>path/filename</path>
+<content>
+Content here....
+</content>
+</input_file>
+...
+<input_file>
+<index>N</index>
+<path>path/filename</path>
+<content>
+Content here....
+</content>
+</input_file>
+
+index is just a number from 1 to N where N is the number of input files.
+
+Your job is to provide a description of each provided file.
+Description for each file should be detailed, contain both high level description and every important detail. Include relationships between files if you have identified them.
+
+Write output in the following format:
+
+<files>
+<file>
+<index>1</index>
+<path>path/filename</path>
+<summary>
+Summary here...
+</summary>
+</file>
+<file>
+<index>2</index>
+<path>path/filename</path>
+<summary>
+Summary here...
+</summary>
+</file>
+...
+<file>
+<index>N</index>
+<path>path/filename</path>
+<summary>
+Summary here...
+</summary>
+</file>
+</files>
+
+Make sure you processed all files and kept original index for each file.
+Output only the XML above, avoid adding extra text.
+
+===========================================================
+

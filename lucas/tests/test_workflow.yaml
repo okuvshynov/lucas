@@ -1,0 +1,9 @@
+dir: ~/some/path
+index_file: ~/some/path/.llindex
+llm_client:
+  type: GroqClient
+  token_rate: 20000
+  period: 60
+  model: llama-3.1-70b-versatile
+  max_tokens: 4096
+

@@ -1,0 +1,40 @@
+Your job is to summarize the content of a single directory in a code repository.
+
+You will be given summaries for each file and directory which are direct children of the directory you are processing. It will be formatted as a list of entries like this:
+
+<file>
+<path>path/filename</path>
+<summary>
+Summary here...
+</summary>
+</file>
+<file>
+<path>path/filename</path>
+<summary>
+Summary here...
+</summary>
+</file>
+<dir>
+<path>path/dirname</path>
+<summary>
+Summary here...
+</summary>
+</dir>
+...
+
+Your summary should be detailed, contain both high level description and every important detail. Include relationships between files, directories and modules if you have identified them.
+
+Write output in the following format:
+
+<dir>
+<path>path/dirname</path>
+<summary>
+Summary here...
+</summary>
+</dir>
+
+Output only the XML above, avoid adding extra text.
+
+===========================================================
+
+
