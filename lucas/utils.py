@@ -45,9 +45,12 @@ def get_file_info(full_path: str, root: str) -> Dict[str, Any]:
 
 def load_index(filename):
     if os.path.exists(filename):
-        with open(filename, 'r') as f:
-            res = json.load(f)
-            return res['files'], res['dirs']
+        try:
+            with open(filename, 'r') as f:
+                res = json.load(f)
+                return res['files'], res['dirs']
+        except (json.JSONDecodeError, KeyError):
+            return {}, {}
     else:
         return {}, {}
 

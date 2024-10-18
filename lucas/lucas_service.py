@@ -30,6 +30,9 @@ def process_jobs():
             logging.info(f"Details: {job_data}")
             indexer = Indexer(job_data)
             indexer.run()
+            with jobs_lock:
+                if job_id in jobs:
+                    jobs[job_id]['timestamp'] = time.time()
         logging.info("Waiting for next processing batch")
         time.sleep(10)  # Wait for 10 seconds before next iteration
 
@@ -71,25 +74,6 @@ def query():
 
     return jsonify({"reply": reply}), 200
 
-# TODO: should this be a separate endpoint?
-# or should it also try plain patch
-@app.route('/fuzzy_patch', methods=['POST'])
-def fuzzy_patch():
-    query = request.json
-    file_content = query['file_content']
-    patch = query['patch']
-    script_dir = os.path.dirname(__file__)
-
-    with open(os.path.join(script_dir, 'prompts', 'fuzzy_patch.txt')) as f:
-        prompt = f.read()
-
-    message = prompt + "\n\n" + f'<file>{file_content}</file>'
-
-    client = client_factory(query['client'])
-    reply = client.send(message)
-    print(reply)
-
-
 @app.route('/jobs', methods=['POST'])
 def create_job():
     job_data = request.json
@@ -127,11 +111,7 @@ def list_jobs():
     with jobs_lock:
         return jsonify(jobs)
 
-def indexer():
-    while True:
-        pass
-
-if __name__ == '__main__':
+def start():
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s %(levelname)s: %(message)s',
@@ -141,7 +121,10 @@ if __name__ == '__main__':
         ]
     )
 
-    #background_thread = threading.Thread(target=process_jobs, daemon=True)
-    #background_thread.start()
+    background_thread = threading.Thread(target=process_jobs, daemon=True)
+    background_thread.start()
 
     app.run(debug=True)
+
+if __name__ == '__main__':
+    start()
