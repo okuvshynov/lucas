@@ -30,11 +30,11 @@ with open(os.path.join(script_dir, 'prompts', 'file_index.txt')) as f:
 with open(os.path.join(script_dir, 'prompts', 'dir_index.txt')) as f:
     dir_index_prompt = f.read()
 
-def parse_dir_results(content):
+def parse_dir_results(dir, content):
     pattern = re.compile(r'<dir>\s*<path>(.*?)</path>\s*<summary>(.*?)</summary>\s*</dir>', re.DOTALL)
     matches = pattern.findall(content)
     
-    result = {path.strip(): summary.strip() for path, summary in matches}
+    result = {dir: summary.strip() for _, summary in matches}
     
     return result
 
@@ -92,5 +92,5 @@ def llm_summarize_dir(child_summaries: List[str], context: DirContext):
     context.metadata['llm_duration'] = duration
     logging.info(reply)
     if reply is not None:
-        return parse_dir_results(reply)
+        return parse_dir_results(context.directory, reply)
     return {}

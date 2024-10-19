@@ -22,8 +22,9 @@ class TestLucasService(unittest.TestCase):
         )
         self.script_dir = os.path.dirname(__file__)
         self.root = os.path.abspath(os.path.join(self.script_dir, '../..'))
+        self.service_log = []
 
-    def test_service_startup(self):
+    def start_service(self):
         current_env = os.environ.copy()
         process = subprocess.Popen(['python', '-m', 'lucas.lucas_service'], 
                                    stdout=subprocess.PIPE, 
@@ -41,6 +42,7 @@ class TestLucasService(unittest.TestCase):
             if output == '' and process.poll() is not None:
                 logging.error('Unable to start lucas server')
                 self.fail('Failed to start lucas server')
+            self.service_log.append(output)
             if output:
                 prefix = ' * Running on'
                 if output.startswith(prefix):
@@ -54,8 +56,12 @@ class TestLucasService(unittest.TestCase):
 
         self.assertIsNotNone(url)
         self.assertTrue(url.startswith('http://'))
+        return url, process
 
-        # Run test_index
+
+    def test_service_startup(self):
+        url, process = self.start_service()
+        #url = 'http://127.0.0.1:5000/'
         self.start_job(url)
 
         logging.info('shutting down service')
@@ -104,9 +110,13 @@ class TestLucasService(unittest.TestCase):
                 logging.info('job completed, checking index')
                 with open(idx_path) as f:
                     index = json.load(f)
+                    logging.debug(f'Index: {index}')
                     for filename in ['mt_priority_queue.h', 'mt_queue.h']:
                         out = index['files'][filename]
                         self.assertIn('processing_result', out)
+                    self.assertIn('dirs', index)
+                    self.assertIn('', index['dirs'])
+                    self.assertIn('processing_result', index['dirs'][''])
                 logging.info('processing results are present.')
                 break
 
