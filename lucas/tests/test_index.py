@@ -89,7 +89,7 @@ class TestLucasService(unittest.TestCase):
             "chunk_size": 4096,
             "llm_client": {"type": "GroqClient"},
             "crawler": {"includes": "*.h,*.cpp", "traverse": "git"},
-            "token_counter" : {"type": "local_counter", "endpoint": "http://localhost:8080/tokenize"}
+            "token_counter" : {"type": "tiktoken_counter"}
         }
         response = requests.post(f"{url}/jobs", json=request)
         self.assertEqual(response.status_code, 201)
