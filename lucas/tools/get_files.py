@@ -1,3 +1,4 @@
+import logging
 import os
 import sys
 # this tools sends back the content of the requested files
@@ -48,6 +49,7 @@ class GetFilesTool:
         }
 
     def run(self, tool_use_args):
+        logging.debug(f'running get_files({tool_use_args})')
         res = []
         paths = tool_use_args['filepaths']
         for p in paths:

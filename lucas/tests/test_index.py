@@ -1,11 +1,11 @@
-import logging
-import tempfile
-import requests
-import time
-import os
 import json
-import unittest
+import logging
+import os
+import requests
 import subprocess
+import tempfile
+import time
+import unittest
 
 TIMEOUT = 60
 
@@ -62,6 +62,23 @@ class TestLucasService(unittest.TestCase):
         process.terminate()
         process.wait()
 
+    def do_query(self, url, idx_file):
+        repo_path = os.path.join(self.script_dir, 'data', 'cpplib')
+        request = {
+            "directory": repo_path,
+            "index_file": idx_file,
+            "message": "Write a small demo for queue.",
+            "client": {
+                "type": "GroqClient"
+            }
+        }
+        response = requests.post(f"{url}/query", json=request)
+        self.assertEqual(response.status_code, 200)
+        response_json = response.json()
+        self.assertIn('reply', response_json)
+        reply = response.json()['reply']
+
+
     def start_job(self, url):
         repo_path = os.path.join(self.script_dir, 'data', 'cpplib')
         idx_path = tempfile.mkstemp()[1]
@@ -97,6 +114,8 @@ class TestLucasService(unittest.TestCase):
                 self.fail('Timeout, index not ready')
 
             time.sleep(1)
+
+        self.do_query(url, idx_path)
 
 if __name__ == '__main__':
     unittest.main()

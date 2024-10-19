@@ -46,7 +46,10 @@ def query():
     query = request.json
 
     codebase_path = query['directory']
-    index_file = os.path.expanduser(os.path.join(codebase_path, ".llidx"))
+    if 'index_file' in query:
+        index_file = os.path.expanduser(query['index_file'])
+    else:
+        index_file = os.path.expanduser(os.path.join(codebase_path, ".llidx"))
 
     if not os.path.isfile(index_file):
         logging.warning(f"The index file '{index_file}' does not exist. Continue without index.")
