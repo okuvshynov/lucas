@@ -13,6 +13,7 @@ from lucas.index_format import format_default
 from lucas.tools.toolset import Toolset
 from lucas.indexer import Indexer
 from lucas.yolo import yolo
+from lucas.stats import dump
 
 app = Flask(__name__)
 
@@ -84,6 +85,10 @@ def create_job():
         job_id = str(len(jobs) + 1)  # Simple ID generation
         jobs[job_id] = job_data
     return jsonify({"id": job_id, "message": "Job created successfully"}), 201
+
+@app.route('/stats', methods=['GET'])
+def get_stats():
+    return jsonify({"stats": dump()}), 200
 
 @app.route('/jobs/<job_id>', methods=['GET'])
 def get_job(job_id):

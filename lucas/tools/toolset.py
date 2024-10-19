@@ -4,6 +4,7 @@ from lucas.tools.get_files import GetFilesTool
 from lucas.tools.git_grep import GitGrepTool
 from lucas.tools.git_log import GitLogTool
 from lucas.tools.git_show import GitShowTool
+from lucas.stats import bump
 
 class Toolset:
     def __init__(self, working_dir):
@@ -24,6 +25,7 @@ class Toolset:
         tool_use_id = tool_use['id']
         tool_use_name = tool_use['name']
         tool_use_args = tool_use['input']
+        bump(f'tool.{tool_use_name}.req')
         logging.info(f'requested tool: {tool_use_name}({tool_use_args})')
 
         for tool in self.tools:

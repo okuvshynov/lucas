@@ -126,6 +126,12 @@ class TestLucasService(unittest.TestCase):
             time.sleep(1)
 
         self.do_query(url, idx_path)
+        
+        response_stats = requests.get(f'{url}/stats')
+        self.assertEqual(response_stats.status_code, 200)
+        stats = response_stats.json()
+        self.assertIn('stats', stats)
+        self.assertIn('tool.get_files.req', stats['stats'])
 
 if __name__ == '__main__':
     unittest.main()
