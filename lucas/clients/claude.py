@@ -12,6 +12,7 @@ from lucas.chat_logger import chat_logger
 from lucas.rate_limiter import RateLimiter
 from lucas.token_counters import tiktoken_counter
 from lucas.context import ChunkContext, DirContext
+from lucas.stats import bump
 
 class ClaudeClient:
     def __init__(self, tokens_rate=20000, period=10, max_tokens=4096, model='claude-3-haiku-20240307'):
@@ -76,6 +77,10 @@ class ClaudeClient:
 
             self.usage = merge_by_key(self.usage, data['usage'])
             logging.info(f'Aggregate usage: {self.usage}')
+            
+            bump('claude_input_tokens', data['usage']['input_tokens'])
+            bump('claude_output_tokens', data['usage']['output_tokens'])
+            bump('claude_total_tokens', data['usage']['total_tokens'])
             if 'content' not in data:
                 logging.error(f'not content in {data}')
                 break

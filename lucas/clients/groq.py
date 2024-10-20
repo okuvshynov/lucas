@@ -11,6 +11,7 @@ from lucas.utils import merge_by_key
 from lucas.token_counters import tiktoken_counter
 from lucas.rate_limiter import RateLimiter
 from lucas.context import ChunkContext, DirContext
+from lucas.stats import bump
 
 class GroqClient:
     def __init__(self, tokens_rate=20000, period=60, max_tokens=4096, model='llama-3.1-70b-versatile'):
@@ -68,6 +69,10 @@ class GroqClient:
 
             self.usage = merge_by_key(self.usage, data['usage'])
             logging.info(f'Aggregate usage: {self.usage}')
+            
+            bump('groq_prompt_tokens', data['usage']['prompt_tokens'])
+            bump('groq_completion_tokens', data['usage']['completion_tokens'])
+            bump('groq_total_tokens', data['usage']['total_tokens'])
             reply = data['choices'][0]
 
             messages.append(reply['message'])

@@ -4,6 +4,7 @@ import json
 import time
 
 from lucas.context import ChunkContext
+from lucas.stats import bump
 
 class LocalClient:
     def __init__(self, n_predict=4096, endpoint='http://localhost/v1/chat/completions', max_req_size=32678):
@@ -46,6 +47,10 @@ class LocalClient:
         res = response.json()
         logging.info(res)
         context.metadata['usage'] = res['usage']
+        
+        bump('local_prompt_tokens', res['usage']['prompt_tokens'])
+        bump('local_completion_tokens', res['usage']['completion_tokens'])
+        bump('local_total_tokens', res['usage']['total_tokens'])
         content = res['choices'][0]['message']['content']
         logging.info(content)
         return content

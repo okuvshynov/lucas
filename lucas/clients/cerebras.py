@@ -11,6 +11,7 @@ from lucas.utils import merge_by_key
 from lucas.token_counters import tiktoken_counter
 from lucas.rate_limiter import RateLimiter
 from lucas.context import ChunkContext, DirContext
+from lucas.stats import bump
 
 class CerebrasClient:
     def __init__(self, tokens_rate=5000, period=20, max_tokens=4096, model='llama3.1-70b'):
@@ -67,6 +68,10 @@ class CerebrasClient:
 
             self.usage = merge_by_key(self.usage, data['usage'])
             logging.info(f'Aggregate usage: {self.usage}')
+            
+            bump('cerebras_prompt_tokens', data['usage']['prompt_tokens'])
+            bump('cerebras_completion_tokens', data['usage']['completion_tokens'])
+            bump('cerebras_total_tokens', data['usage']['total_tokens'])
             reply = data['choices'][0]
 
             messages.append(reply['message'])

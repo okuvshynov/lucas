@@ -11,6 +11,7 @@ from lucas.utils import merge_by_key
 from lucas.token_counters import tiktoken_counter
 from lucas.rate_limiter import RateLimiter
 from lucas.context import ChunkContext, DirContext
+from lucas.stats import bump
 
 class MistralClient:
     def __init__(self, tokens_rate=20000, period=60, max_tokens=8192, model='mistral-large-latest'):
@@ -62,6 +63,10 @@ class MistralClient:
 
             self.usage = merge_by_key(self.usage, data['usage'])
             logging.info(f'Aggregate usage: {self.usage}')
+            
+            bump('mistral_prompt_tokens', data['usage']['prompt_tokens'])
+            bump('mistral_completion_tokens', data['usage']['completion_tokens'])
+            bump('mistral_total_tokens', data['usage']['total_tokens'])
             reply = data['choices'][0]
 
             messages.append(reply['message'])
