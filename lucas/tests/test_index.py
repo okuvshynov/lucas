@@ -6,11 +6,14 @@ import subprocess
 import tempfile
 import time
 import unittest
+from parameterized import parameterized, param
 
 TIMEOUT = 60
 
-class TestLucasService(unittest.TestCase):
+def check_env(env_var):
+    return env_var in os.environ
 
+class TestLucasService(unittest.TestCase):
     def setUp(self):
         logging.basicConfig(
             level=logging.INFO,
@@ -22,7 +25,12 @@ class TestLucasService(unittest.TestCase):
         )
         self.script_dir = os.path.dirname(__file__)
         self.root = os.path.abspath(os.path.join(self.script_dir, '../..'))
-        self.service_log = []
+        self.url, self.process = self.start_service()
+
+    def tearDown(self):
+        logging.info('shutting down service')
+        self.process.terminate()
+        self.process.wait()
 
     def start_service(self):
         current_env = os.environ.copy()
@@ -42,7 +50,6 @@ class TestLucasService(unittest.TestCase):
             if output == '' and process.poll() is not None:
                 logging.error('Unable to start lucas server')
                 self.fail('Failed to start lucas server')
-            self.service_log.append(output)
             if output:
                 prefix = ' * Running on'
                 if output.startswith(prefix):
@@ -58,15 +65,17 @@ class TestLucasService(unittest.TestCase):
         self.assertTrue(url.startswith('http://'))
         return url, process
 
-
-    def test_service_startup(self):
-        url, process = self.start_service()
+    @parameterized.expand([
+        param("GroqClient", "GROQ_API_KEY"),
+        param("CerebrasClient", "CEREBRAS_API_KEY"),
+        param("MistralClient", "MISTRAL_API_KEY"),
+    ])
+    def test_service(self, client_name, env_var):
+        if not check_env(env_var):
+            self.skipTest(f"Environment variable {env_var} not set")
         #url = 'http://127.0.0.1:5000/'
-        self.start_job(url)
+        self.start_job(self.url, client_name)
 
-        logging.info('shutting down service')
-        process.terminate()
-        process.wait()
 
     def do_query(self, url, idx_file):
         repo_path = os.path.join(self.script_dir, 'data', 'cpplib')
@@ -85,7 +94,7 @@ class TestLucasService(unittest.TestCase):
         reply = response.json()['reply']
 
 
-    def start_job(self, url):
+    def start_job(self, url, client_name):
         repo_path = os.path.join(self.script_dir, 'data', 'cpplib')
         idx_path = tempfile.mkstemp()[1]
 
@@ -93,17 +102,18 @@ class TestLucasService(unittest.TestCase):
             "dir": repo_path,
             "index_file": idx_path,
             "chunk_size": 4096,
-            "llm_client": {"type": "GroqClient"},
+            "llm_client": {"type": client_name},
             "crawler": {"includes": "*.h,*.cpp", "traverse": "git"},
             "token_counter" : {"type": "tiktoken_counter"}
         }
         response = requests.post(f"{url}/jobs", json=request)
         self.assertEqual(response.status_code, 201)
+        job_id = response.json()['id']
         logging.info('indexing job submitted, waiting for completion')
 
         start = time.time()
         while True:
-            response = requests.get(f"{url}/jobs/1")
+            response = requests.get(f"{url}/jobs/{job_id}")
             self.assertEqual(response.status_code, 200)
             job_status = response.json()
             if 'timestamp' in job_status:
