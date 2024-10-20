@@ -72,7 +72,7 @@ class TestLucasService(unittest.TestCase):
     ])
     def test_service(self, client_name, env_var):
         if not check_env(env_var):
-            self.skipTest(f"Environment variable {env_var} not set")
+            self.skipTest(f"Not testing {client_name}, environment variable {env_var} not set")
         #url = 'http://127.0.0.1:5000/'
         self.start_job(self.url, client_name)
 
@@ -140,6 +140,7 @@ class TestLucasService(unittest.TestCase):
         response_stats = requests.get(f'{url}/stats')
         self.assertEqual(response_stats.status_code, 200)
         stats = response_stats.json()
+        logging.info(stats)
         self.assertIn('stats', stats)
         self.assertIn('tool.get_files.req', stats['stats'])
 
