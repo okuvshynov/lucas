@@ -1,6 +1,6 @@
 {
     "directory": "~/projects/lucas",
-    "message": "Let's log entire json conversation for each client to a separate file. One call to client.send should be logged to a separate temp file (persisted, not removed) and full name of this file should be written to normal log. Create a new class ConversationLogger which would handle this and used from every client.",
+    "message": "Let's log entire json conversation for each client implementation to a separate file. One call to send() should be logged to a separate temp file (persisted, not removed) and full name of this file should be written to normal log. Create a new class ConversationLogger which would handle this and used from every client.",
     "client": {
         "type": "ClaudeClient",
         "model": "claude-3-5-sonnet-20240620",
