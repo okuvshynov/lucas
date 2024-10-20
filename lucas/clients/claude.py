@@ -12,6 +12,7 @@ from lucas.rate_limiter import RateLimiter
 from lucas.token_counters import tiktoken_counter
 from lucas.context import ChunkContext, DirContext
 from lucas.stats import bump
+from lucas.conversation_logger import ConversationLogger
 
 class ClaudeClient:
     def __init__(self, tokens_rate=20000, period=10, max_tokens=4096, model='claude-3-haiku-20240307'):
@@ -34,6 +35,8 @@ class ClaudeClient:
             'anthropic-version': '2023-06-01',
             'content-type': 'application/json'
         }
+
+        self.logger = ConversationLogger('claude')
 
     def send(self, message, toolset=None, max_iterations=10):
         messages = [{"role": "user", "content": message}]
@@ -62,6 +65,8 @@ class ClaudeClient:
             self.rate_limiter.add_request(payload_size)
 
             response = requests.post(self.url, headers=self.headers, data=payload)
+
+            log_path = self.logger.log_conversation(request, response.json())
 
             # Check if the request was successful
             if response.status_code != 200:

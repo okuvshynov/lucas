@@ -12,6 +12,7 @@ from lucas.token_counters import tiktoken_counter
 from lucas.rate_limiter import RateLimiter
 from lucas.context import ChunkContext, DirContext
 from lucas.stats import bump
+from lucas.conversation_logger import ConversationLogger
 
 class MistralClient:
     def __init__(self, tokens_rate=20000, period=60, max_tokens=8192, model='mistral-large-latest'):
@@ -30,6 +31,8 @@ class MistralClient:
 
         # TODO: change this
         self.token_counter = tiktoken_counter()
+
+        self.logger = ConversationLogger('mistral')
 
     def send(self, message, toolset=None, max_iterations=10):
         messages = [{"role": "user", "content": message}]
@@ -53,6 +56,8 @@ class MistralClient:
             self.rate_limiter.add_request(payload_size)
 
             response = requests.post(self.url, headers=self.headers, data=payload)
+
+            log_path = self.logger.log_conversation(request, response.json())
 
             # Check if the request was successful
             if response.status_code != 200:

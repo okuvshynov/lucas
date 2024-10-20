@@ -12,6 +12,7 @@ from lucas.token_counters import tiktoken_counter
 from lucas.rate_limiter import RateLimiter
 from lucas.context import ChunkContext, DirContext
 from lucas.stats import bump
+from lucas.conversation_logger import ConversationLogger
 
 class GroqClient:
     def __init__(self, tokens_rate=20000, period=60, max_tokens=4096, model='llama-3.1-70b-versatile'):
@@ -33,6 +34,8 @@ class GroqClient:
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {self.api_key}'
         }
+
+        self.logger = ConversationLogger('groq')
 
     def send(self, message, toolset=None, max_iterations=10):
         messages = [{"role": "user", "content": message}]
@@ -59,6 +62,8 @@ class GroqClient:
             self.rate_limiter.add_request(payload_size)
 
             response = requests.post(self.url, headers=self.headers, data=payload)
+
+            log_path = self.logger.log_conversation(request, response.json())
 
             # Check if the request was successful
             if response.status_code != 200:

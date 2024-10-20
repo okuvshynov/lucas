@@ -5,6 +5,7 @@ import time
 
 from lucas.context import ChunkContext
 from lucas.stats import bump
+from lucas.conversation_logger import ConversationLogger
 
 class LocalClient:
     def __init__(self, n_predict=4096, endpoint='http://localhost/v1/chat/completions', max_req_size=32678):
@@ -14,6 +15,8 @@ class LocalClient:
         self.headers = {
             'Content-Type': 'application/json',
         }
+
+        self.logger = ConversationLogger('local')
 
     def query(self, context: ChunkContext):
         #logging.info(f'sending: {message}')
@@ -33,6 +36,7 @@ class LocalClient:
 
         try:
             response = requests.post(self.endpoint, headers=self.headers, data=payload)
+            log_path = self.logger.log_conversation(req, response.json())
         except requests.exceptions.ConnectionError:
             context.metadata['error'] = 'Connection Error'
             logging.error(f'Connection error')
