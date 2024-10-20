@@ -75,7 +75,7 @@ class ClaudeClient:
             
             bump('claude_input_tokens', data['usage']['input_tokens'])
             bump('claude_output_tokens', data['usage']['output_tokens'])
-            bump('claude_total_tokens', data['usage']['input_tokes'] + data['usage']['output_tokens'])
+            bump('claude_total_tokens', data['usage']['input_tokens'] + data['usage']['output_tokens'])
             if 'content' not in data:
                 logging.error(f'not content in {data}')
                 break
