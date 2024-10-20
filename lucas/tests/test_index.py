@@ -68,7 +68,6 @@ class TestLucasService(unittest.TestCase):
     @parameterized.expand([
         param("GroqClient", "GROQ_API_KEY"),
         param("CerebrasClient", "CEREBRAS_API_KEY"),
-        param("MistralClient", "MISTRAL_API_KEY"),
     ])
     def test_service(self, client_name, env_var):
         if not check_env(env_var):

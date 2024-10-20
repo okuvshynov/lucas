@@ -9,6 +9,7 @@ from lucas.tools.toolset import Toolset
 from lucas.utils import merge_by_key
 
 from lucas.token_counters import tiktoken_counter
+from lucas.rate_limiter import RateLimiter
 from lucas.context import ChunkContext, DirContext
 
 class MistralClient:
@@ -21,30 +22,14 @@ class MistralClient:
             'Authorization': f'Bearer {self.api_key}'
         }
 
-        self.history: List[Tuple[float, int]] = []
-        self.tokens_rate: int = tokens_rate
-        self.period: int = period
         self.max_tokens: int = max_tokens
+        self.rate_limiter = RateLimiter(tokens_rate, period)
         self.model: str = model
         self.usage = {}
 
         # TODO: change this
         self.token_counter = tiktoken_counter()
 
-
-    def wait_time(self):
-        total_size = sum(size for _, size in self.history)
-        if total_size < self.tokens_rate:
-            return 0
-        current_time = time.time()
-        running_total = total_size
-        for time_stamp, size in self.history:
-            running_total -= size
-            if running_total <= self.tokens_rate:
-                return max(0, time_stamp + self.period - current_time)
-
-
-    # this handles interaction + tool use, it returns control after that.
     def send(self, message, toolset=None, max_iterations=10):
         messages = [{"role": "user", "content": message}]
         for i in range(max_iterations):
@@ -59,20 +44,12 @@ class MistralClient:
             payload = json.dumps(request)
             payload_size = self.token_counter(payload)
 
-            if payload_size > self.tokens_rate:
-                err = f'unable to send message of {payload_size} tokens. Limit is {self.tokens_rate}'
+            if payload_size > self.rate_limiter.tokens_rate:
+                err = f'unable to send message of {payload_size} tokens. Limit is {self.rate_limiter.tokens_rate}'
                 logging.error(err)
                 return None
 
-            current_time = time.time()
-            self.history = [(t, s) for t, s in self.history if current_time - t <= self.period]
-            self.history.append((current_time, payload_size))
-
-            wait_for = self.wait_time()
-
-            if wait_for > 0:
-                logging.info(f'client-side rate-limiting. Waiting for {wait_for} seconds')
-                time.sleep(wait_for)
+            self.rate_limiter.add_request(payload_size)
 
             response = requests.post(self.url, headers=self.headers, data=payload)
 
