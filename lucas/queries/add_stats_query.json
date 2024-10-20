@@ -1,0 +1,9 @@
+{
+    "directory": "~/projects/lucas",
+    "message": "Let's add stats calls for each client, similar to toolset.",
+    "client": {
+        "type": "ClaudeClient",
+        "model": "claude-3-5-sonnet-20240620",
+        "max_tokens": 6144
+    }
+}
