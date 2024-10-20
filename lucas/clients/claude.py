@@ -7,7 +7,6 @@ import time
 
 from lucas.tools.toolset import Toolset
 from lucas.utils import merge_by_key
-from lucas.chat_logger import chat_logger
 
 from lucas.rate_limiter import RateLimiter
 from lucas.token_counters import tiktoken_counter
@@ -62,8 +61,6 @@ class ClaudeClient:
 
             self.rate_limiter.add_request(payload_size)
 
-            #chat_logger.info(f'>> Claude: {payload}')
-
             response = requests.post(self.url, headers=self.headers, data=payload)
 
             # Check if the request was successful
@@ -72,8 +69,6 @@ class ClaudeClient:
                 return None
 
             data = response.json()
-
-            #chat_logger.info(f'<< Claude: {data}')
 
             self.usage = merge_by_key(self.usage, data['usage'])
             logging.info(f'Aggregate usage: {self.usage}')
