@@ -1,0 +1,9 @@
+{
+    "dir": "~/projects/lucas",
+    "index_file": "~/projects/lucas/lucas_index.json",
+    "chunk_size": 4096,
+    "llm_client": {"type": "GroqClient"},
+    "crawler": {"includes": "*.py,*.json,*.txt", "traverse": "git"},
+    "token_counter" : {"type": "local_counter", "endpoint": "http://localhost:8080/tokenize"}
+}
+

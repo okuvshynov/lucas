@@ -5,5 +5,4 @@
     "llm_client": {"type": "GroqClient"},
     "crawler": {"includes": "*.py,*.json", "traverse": "git"},
     "token_counter" : {"type": "local_counter", "endpoint": "http://localhost:8080/tokenize"}
-
 }
