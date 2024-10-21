@@ -9,6 +9,7 @@ from lucas.llm_client import client_factory
 from lucas.stats import dump
 from lucas.tools.toolset import Toolset
 from lucas.yolo import yolo
+from lucas.index_stats import index_stats
 
 def _index(args):
     try:
@@ -25,6 +26,8 @@ def _index(args):
     config['index_file'] = os.path.join(config['dir'], 'lucas.idx')
     indexer = Indexer(config)
     indexer.run()
+    # Print index stats after indexing is complete
+    index_stats(config['index_file'])
 
 def _query(args):
     message = args[0]
