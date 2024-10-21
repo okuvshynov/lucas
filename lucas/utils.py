@@ -56,7 +56,7 @@ def load_index(filename):
 
 def save_index(files, dirs, filename):
     with open(filename, 'w') as f:
-        json.dump({'files': files, 'dirs': dirs}, f)
+        json.dump({'files': files, 'dirs': dirs}, f, indent=4)
 
 
 def merge_by_key(*dicts):
