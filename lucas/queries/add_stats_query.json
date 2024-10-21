@@ -1,9 +1,0 @@
-{
-    "directory": "~/projects/lucas",
-    "message": "Let's add stats calls for each client. Check the stats.py implemetation.",
-    "client": {
-        "type": "ClaudeClient",
-        "model": "claude-3-5-sonnet-20240620",
-        "max_tokens": 6144
-    }
-}

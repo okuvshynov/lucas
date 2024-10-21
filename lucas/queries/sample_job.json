@@ -1,8 +1,0 @@
-{
-    "dir": "~/projects/experiments/llindex/",
-    "index_file": "~/projects/experiments/llindex/lucas2.idx",
-    "chunk_size": 4096,
-    "llm_client": {"type": "GroqClient"},
-    "crawler": {"includes": "*.py,*.json", "traverse": "git", "excludes": "lucas_index.json"},
-    "token_counter" : {"type": "local_counter", "endpoint": "http://localhost:8080/tokenize"}
-}
