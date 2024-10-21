@@ -45,11 +45,12 @@ def parse_patch_file(content):
     return patch_dict
 
 def yolo(query):
+    logging.info(query)
     codebase_path = os.path.expanduser(query['directory'])
-    if 'index_path' in query:
-        index_file = os.path.expanduser(query['index_path'])
+    if 'index_file' in query:
+        index_file = os.path.expanduser(query['index_file'])
     else:
-        index_file = os.path.expanduser(os.path.join(codebase_path, "lucas_index.json"))
+        index_file = os.path.expanduser(os.path.join(codebase_path, "lucas.idx"))
 
     if not os.path.isfile(index_file):
         logging.error(f"The index file '{index_file}' does not exist")

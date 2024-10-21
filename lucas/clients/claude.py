@@ -14,8 +14,17 @@ from lucas.context import ChunkContext, DirContext
 from lucas.stats import bump
 from lucas.conversation_logger import ConversationLogger
 
+pricing_usd_1m = {
+    'claude-3-5-sonnet-20240620' : {
+        'input_tokens': 3.0,
+        'cache_creation_input_tokens': 3.75,
+        'cache_read_input_tokens': 0.3,
+        'output_tokens': 15.0
+    }
+}
+
 class ClaudeClient:
-    def __init__(self, tokens_rate=20000, period=10, max_tokens=4096, model='claude-3-haiku-20240307'):
+    def __init__(self, tokens_rate=20000, period=10, max_tokens=4096, model='claude-3-haiku-20240307', cache=None):
         self.api_key: str = os.environ.get('ANTHROPIC_API_KEY')
 
         if self.api_key is None:
@@ -26,7 +35,6 @@ class ClaudeClient:
         self.model: str = model
 
         self.usage = {}
-        # TODO: change this
         self.token_counter = tiktoken_counter()
 
         self.url = 'https://api.anthropic.com/v1/messages'
@@ -35,11 +43,17 @@ class ClaudeClient:
             'anthropic-version': '2023-06-01',
             'content-type': 'application/json'
         }
-
+        self.do_cache = False
+        if cache is not None:
+            self.headers['anthropic-beta'] = 'prompt-caching-2024-07-31'
+            self.do_cache = True
         self.logger = ConversationLogger('claude')
 
     def send(self, message, toolset=None, max_iterations=10):
-        messages = [{"role": "user", "content": message}]
+        messages = [{"role": "user", "content": [{"type": "text", "text": message}]}]
+
+        if self.do_cache:
+            messages[0]["content"][0]["cache_control"] = {"type": "ephemeral"}
 
         for i in range(max_iterations):
             request = {
@@ -50,8 +64,10 @@ class ClaudeClient:
             if toolset is not None:
                 request["tools"] = toolset.definitions()
                 # need something like 'any' here
+                # TODO: this breaks prompt caching on first iteration
                 tool_choice = {"type": "auto"} if i > 0 else {"type": "any"}
                 request["tool_choice"] = tool_choice
+
             payload = json.dumps(request)
             payload_size = self.token_counter(payload)
 
@@ -77,6 +93,11 @@ class ClaudeClient:
 
             self.usage = merge_by_key(self.usage, data['usage'])
             logging.info(f'Aggregate usage: {self.usage}')
+
+            for k, v in self.usage.items():
+                price = pricing_usd_1m[self.model][k]
+                cost = v * price * 1e-6
+                logging.info(f'{k}: {v}, {cost:.2f}$ total')
             
             bump('claude_input_tokens', data['usage']['input_tokens'])
             bump('claude_output_tokens', data['usage']['output_tokens'])
