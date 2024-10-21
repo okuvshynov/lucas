@@ -90,7 +90,6 @@ def llm_summarize_dir(child_summaries: List[str], context: DirContext):
     duration = time.time() - start
     logging.info(f'LLM client query took {duration:.3f} seconds.')
     context.metadata['llm_duration'] = duration
-    logging.info(reply)
     if reply is not None:
         return parse_dir_results(context.directory, reply)
     return {}

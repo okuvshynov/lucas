@@ -21,15 +21,13 @@ def aggregate_by_directory(file_dict):
     
     return {dir_path: tuple(stats) for dir_path, stats in dir_stats.items()}
 
-def main():
-    index_file = sys.argv[1]
-    with open(index_file, 'r') as f:
+def index_stats(file_name):
+    with open(file_name, 'r') as f:
         data = json.load(f)
 
     data, dir_data = data['files'], data['dirs']
 
     index_tokens = sum(token_counter_claude(v['processing_result']) for v in data.values() if 'processing_result' in v)
-
 
     files = {k: v['approx_tokens'] for k, v in data.items()}
     completed = {k: v['approx_tokens'] for k, v in data.items() if 'processing_result' in v}
@@ -70,6 +68,9 @@ def main():
             print(f'Completed file {k}')
             print(f'Summary: {v["processing_result"][:l]}')
 
+
+def main():
+    index_file = sys.argv[1]
 
 if __name__ == '__main__':
     main()
