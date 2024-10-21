@@ -1,0 +1,43 @@
+You are given a summary of a code repository in the following xml-like format:
+<dir>
+    <path>...</path>
+    <summary>Description of this directory</summary>
+    <dirs>
+        <dir>...</dir>
+        <dir>...</dir>
+    </dirs>
+    <files>
+        <file>file/path/here</file>
+        <file>file/path/here</file>
+        ...
+    </files>
+</dir>
+
+Each directory will have a summary, all files will be listed.
+
+You will be given task in <task></task> tags.
+
+You will have access to several existing tools:
+- get_files: tool to get content of the files you need to accomplish that task.
+- git_grep: tool to find the references/uses of a symbol in a codebase.
+- git_log: tool to find a symbol in commit history, not in the current state only. Useful to find when some functionality was introduced and why.
+- git_show: tool to show the content of the commit by its id. Useful to show the content of some commits returned by git_log
+
+Your job is to identify and implement new tools, if any such tool would be essential to answering the task. YOU DON'T NEED TO SOLVE THE TASK. YOU NEED TO CHECK IF WE NEED TO CREATE MORE TOOLS TO SUCCESSFULLY SOLVE IT LATER. When considering possible tools, think of what software engineer in normal environment would have/be able to use/be able to build.
+
+If no new tool is needed, reply with empty '<new_tools></new_tools>' tag pair.
+
+Otherwise, reply in the following format:
+<new_tools>
+    <new_tool>
+        <name>new_tool_name</name>
+        <definition>json definition of a tool you can use</definition>
+        <implementation>possible implementation of a tool, or suggestions on how to build it</implementation>
+    </new_tool>
+    ...
+    <new_tool>
+        <name>new_tool_name</name>
+        <definition>json definition of a tool you can use</definition>
+        <implementation>possible implementation of a tool, or suggestions on how to build it</implementation>
+    </new_tool>
+</new_tools>

@@ -29,6 +29,46 @@ def _index(args):
     # Print index stats after indexing is complete
     index_stats(config['index_file'])
 
+def _auto(args):
+    message = args[0]
+    try:
+        with open('lucas.conf', 'r') as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        logging.error("lucas.conf file not found.")
+        return
+    except json.JSONDecodeError:
+        logging.error("lucas.conf contains invalid JSON.")
+        return
+
+    directory = os.getcwd()
+    index_file = os.path.join(directory, 'lucas.idx')
+
+    if not os.path.isfile(index_file):
+        logging.warning(f"The index file '{index_file}' does not exist. Continue without index.")
+        index_formatted = ""
+    else:
+        with open(index_file, 'r') as f:
+            index = json.load(f)
+
+        logging.info('loaded index')
+        index_formatted = format_default(index)
+
+    script_dir = os.path.dirname(__file__)
+
+    with open(os.path.join(script_dir, 'prompts', 'auto_tools.txt')) as f:
+        prompt = f.read()
+
+    task = f'<task>{message}</task>'
+
+    user_message = prompt + index_formatted + '\n\n' + task
+    client = client_factory(config['query_client'])
+    toolset = Toolset(directory)
+
+    reply = client.send(user_message, toolset)
+
+    print(reply)
+
 def _query(args):
     message = args[0]
     try:
@@ -104,6 +144,7 @@ def main():
     commands = {
         'index': _index,
         'query': _query,
+        'auto': _auto,
         'yolo': _yolo
     }
 
