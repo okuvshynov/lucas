@@ -20,7 +20,7 @@ pricing_usd_1m = {
         'cache_creation_input_tokens': 3.75,
         'cache_read_input_tokens': 0.3,
         'output_tokens': 15.0
-    }
+    },
     'claude-3-5-sonnet-20240620' : {
         'input_tokens': 3.0,
         'cache_creation_input_tokens': 3.75,
