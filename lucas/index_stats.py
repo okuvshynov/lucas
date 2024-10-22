@@ -71,6 +71,7 @@ def index_stats(file_name):
 
 def main():
     index_file = sys.argv[1]
+    index_stats(index_file)
 
 if __name__ == '__main__':
     main()
