@@ -2,6 +2,9 @@ import json
 import logging
 import os
 import sys
+import tiktoken
+from collections import defaultdict
+from pathlib import Path
 
 from lucas.index_format import format_default
 from lucas.indexer import Indexer
@@ -9,7 +12,66 @@ from lucas.llm_client import client_factory
 from lucas.stats import dump
 from lucas.tools.toolset import Toolset
 from lucas.yolo import yolo
-from lucas.index_stats import index_stats
+
+def token_counter_claude(text):
+    enc = tiktoken.get_encoding("cl100k_base")
+    tokens = enc.encode(text, disallowed_special=())
+    return len(tokens)
+
+def aggregate_by_directory(file_dict):
+    dir_stats = defaultdict(lambda: [0, 0])
+    
+    for file_path, v in file_dict.items():
+        path = Path(file_path)
+        for parent in path.parents:
+            dir_stats[str(parent) + '/'][0] += 1
+            if 'processing_result' in v:
+                dir_stats[str(parent) + '/'][1] += 1
+    
+    return {dir_path: tuple(stats) for dir_path, stats in dir_stats.items()}
+
+def index_stats(file_name, show_sample=None):
+    with open(file_name, 'r') as f:
+        data = json.load(f)
+
+    data, dir_data = data['files'], data['dirs']
+
+    index_tokens = sum(token_counter_claude(v['processing_result']) for v in data.values() if 'processing_result' in v)
+
+    files = {k: v['approx_tokens'] for k, v in data.items()}
+    completed = {k: v for k, v in data.items() if 'processing_result' in v}
+    skipped = {k: v['approx_tokens'] for k, v in data.items() if 'skipped' in v and v['skipped']}
+
+    dir_stats = aggregate_by_directory(data)
+    fully_completed_directories = 0
+    total_directories = 0
+    partially_completed_directories = 0
+    for k, v in dir_stats.items():
+        if v[1] == v[0]:
+            fully_completed_directories += 1
+        elif v[1] > 0:
+            partially_completed_directories += 1
+        total_directories += 1
+
+    print(f'Index stats:')
+    print(f'  Files: {len(data)}')
+    print(f'  Directories: {total_directories}')
+    print(f'  Tokens: {index_tokens}')
+    print(f'File stats:')
+    print(f'  Tokens in files: {sum(files.values())}')
+    print(f'  Files completed: {len(completed)}')
+    print(f'  Tokens in files completed: {sum(v["approx_tokens"] for v in completed.values())}')
+    print(f'  Files skipped: {len(skipped)}')
+    print(f'  Tokens in files skipped: {sum(skipped.values())}')
+    print('Dir stats:')
+    print(f'  Directories with all files summarized: {fully_completed_directories}')
+    print(f'  Directories with skipped files: {partially_completed_directories}')
+    print(f'  Directories with summaries: {len(dir_data)}')
+
+    if show_sample:
+        print('\nSample of processed files:')
+        for k, v in completed.items():
+            print(f'\nCompleted file {k}\nSummary: {v["processing_result"][:show_sample]}')
 
 def _index(args):
     try:
@@ -28,6 +90,28 @@ def _index(args):
     indexer.run()
     # Print index stats after indexing is complete
     index_stats(config['index_file'])
+
+def _stat(args):
+    try:
+        with open('lucas.conf', 'r') as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        logging.error("lucas.conf file not found.")
+        return
+    except json.JSONDecodeError:
+        logging.error("lucas.conf contains invalid JSON.")
+        return
+    
+    directory = os.getcwd()
+    index_file = os.path.join(directory, 'lucas.idx')
+    
+    if not os.path.isfile(index_file):
+        logging.error(f"The index file '{index_file}' does not exist.")
+        return
+    
+    sample_length = int(args[0]) if len(args) > 0 else None
+    index_stats(index_file, sample_length)
+
 
 def _auto(args):
     message = args[0]
@@ -145,7 +229,8 @@ def main():
         'index': _index,
         'query': _query,
         'auto': _auto,
-        'yolo': _yolo
+        'yolo': _yolo,
+        'stat': _stat
     }
 
     if len(sys.argv) < 2:
