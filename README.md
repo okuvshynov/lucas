@@ -69,5 +69,10 @@ lcs yolo "Let's log entire json conversation for each client implementation to a
 ```
 Uses index, tools, generates patches and applies them to automatically produce https://github.com/okuvshynov/lucas/commit/960369fd05788ed22d2db51d545be1997d687c9b
 
+Index stats:
+```
+lcs stat
+```
+Shows size of the index (files, dirs, tokens).
 
 
