@@ -13,6 +13,7 @@ In progress effort to experiment on efficient real-world software engineering ta
 
 * Automated tool generation: https://github.com/okuvshynov/lucas/blob/main/lucas/prompts/auto_tools.txt, https://github.com/okuvshynov/lucas/commit/95f43206e36b5cf9a281f3f08881b9a9a5e3e876 - something similar to CoT but let it produce tools first.
 * Experiment on larger projects and add tools for index exploration.
+* batch processing for local indexing to speed it up
 
 ## Example
 
