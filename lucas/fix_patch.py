@@ -13,10 +13,10 @@ def fix_patch(patch_content):
     
     fixed_lines = []
 
-    # this is index in 'diff' file
+    # this is 0-based index in 'diff' file
     current_hunk_start = 0
 
-    # and this is index in 'original' file
+    # and this is 1-based index in 'original' file
     current_hunk_line = 0
     current_hunk_size = 0
     new_hunk_size = 0
@@ -26,7 +26,7 @@ def fix_patch(patch_content):
     for i, line in enumerate(lines):
         if line.startswith('@@'):
             # If we're processing a new hunk, fix the previous one (if any)
-            if current_hunk_start > 0:
+            if current_hunk_line > 0:
                 fixed_header = f'@@ -{current_hunk_line},{current_hunk_size} +{new_hunk_start},{new_hunk_size} @@{rest_of_header}'
                 fixed_lines[current_hunk_start] = fixed_header
 
@@ -34,7 +34,7 @@ def fix_patch(patch_content):
             match = hunk_header_pattern.match(line)
             if match:
                 current_hunk_start = i
-                current_hunk_line = match.group(1)
+                current_hunk_line = int(match.group(1))
                 new_hunk_start = match.group(2)
                 current_hunk_size = 0
                 new_hunk_size = 0
@@ -51,7 +51,7 @@ def fix_patch(patch_content):
         fixed_lines.append(line)
 
     # Fix the last hunk
-    if current_hunk_start > 0:
+    if current_hunk_line > 0:
         fixed_header = f'@@ -{current_hunk_line},{current_hunk_size} +{new_hunk_start},{new_hunk_size} @@{rest_of_header}'
         fixed_lines[current_hunk_start] = fixed_header
 

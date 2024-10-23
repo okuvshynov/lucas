@@ -61,7 +61,7 @@ class Crawler:
         reused = []
         for relative_path in self.traverse(self.root):
             if self.should_process(relative_path):
-                logging.info(f'processing {relative_path}')
+                logging.debug(f'processing {relative_path}')
                 full_path = os.path.join(self.root, relative_path)
                 file_info = get_file_info(full_path, self.root)
                 if file_info is None:
