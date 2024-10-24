@@ -3,6 +3,10 @@ import sys
 import logging
 from lucas.failed_patch_logger import FailedPatchLogger
 
+# TODO: maybe we should abandon this and use some fuzzy patching
+# with small llm?
+
+
 # while at least sonnet 3.5 is pretty good, it makes mistakes
 # when counting lines in a hunk. Let's manually fix it. Let's assume
 # starting lines and +/- sizes are correct, but size might be off
