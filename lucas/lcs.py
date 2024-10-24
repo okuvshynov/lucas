@@ -295,6 +295,7 @@ def main():
     command = sys.argv[1]
     if command not in commands:
         logging.error(f"Unknown command '{command}'")
+        _help([])
         sys.exit(1)
 
     args = sys.argv[2:]
