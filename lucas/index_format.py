@@ -26,7 +26,7 @@ def print_dir(curr, tree, dirs, files, offset=False, file_mode='name', dir_mode=
         lines.append(f'  <summary>{dirs[curr]["processing_result"]}</summary>')
     lines.append(f'  <dirs>')
     for subdir in tree[curr]['dirs']:
-        lines.extend(print_dir(subdir, tree, dirs, files, True, file_mode))
+        lines.extend(print_dir(subdir, tree, dirs, files, True, file_mode, dir_mode))
     lines.append(f'  </dirs>')
 
     lines.append(f'  <files>')
