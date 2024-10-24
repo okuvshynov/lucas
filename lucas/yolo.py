@@ -12,7 +12,7 @@ import subprocess
 from lucas.llm_client import client_factory
 from lucas.index_format import format_default
 from lucas.tools.toolset import Toolset
-from lucas.fix_patch import fix_patch
+from lucas.fix_patch import fix_patch, save_failed_patch
 
 def apply_patch(file_path, patch_content):
     try:
@@ -21,7 +21,8 @@ def apply_patch(file_path, patch_content):
         result = subprocess.run(patch_cmd, input=content, text=True, capture_output=True, check=True)
         return True
     except subprocess.CalledProcessError as e:
-        logging.error("Error applying patch.")
+        logging.error(f"Error applying patch for {file_path}")
+        save_failed_patch(patch_content)
 
     return False
 

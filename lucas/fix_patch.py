@@ -1,5 +1,7 @@
 import re
 import sys
+import logging
+from lucas.failed_patch_logger import FailedPatchLogger
 
 # while at least sonnet 3.5 is pretty good, it makes mistakes
 # when counting lines in a hunk. Let's manually fix it. Let's assume
@@ -57,6 +59,13 @@ def fix_patch(patch_content):
 
     return '\n'.join(fixed_lines)
 
+def save_failed_patch(patch_content):
+    """Save a failed patch to a temporary file and log its location."""
+    logger = FailedPatchLogger()
+    full_path = logger.log_failed_patch(patch_content)
+    return full_path
+
+_logger = None
 
 def main():
     with open(sys.argv[1], 'r') as f:
