@@ -6,7 +6,7 @@ import tiktoken
 from collections import defaultdict
 from pathlib import Path
 
-from lucas.index_format import format_default
+from lucas.index_format import format_default, format_mini, format_full
 from lucas.indexer import Indexer
 from lucas.llm_client import client_factory
 from lucas.stats import dump
@@ -34,7 +34,16 @@ def index_stats(file_name, show_sample=None):
     with open(file_name, 'r') as f:
         data = json.load(f)
 
+    idx_mini = format_mini(data)
+    idx_full = format_full(data)
+    idx_default = format_default(data)
+
+    tokens_mini = token_counter_claude(idx_mini)
+    tokens_full = token_counter_claude(idx_full)
+    tokens_default = token_counter_claude(idx_default)
+
     data, dir_data = data['files'], data['dirs']
+
 
     index_tokens = sum(token_counter_claude(v['processing_result']) for v in data.values() if 'processing_result' in v)
 
@@ -57,6 +66,10 @@ def index_stats(file_name, show_sample=None):
     print(f'  Files: {len(data)}')
     print(f'  Directories: {total_directories}')
     print(f'  Tokens: {index_tokens}')
+    print(f'  Tokens mini: {tokens_mini}')
+    print(f'  Tokens default: {tokens_default}')
+    print(f'  Tokens full: {tokens_full}')
+
     print(f'File stats:')
     print(f'  Tokens in files: {sum(files.values())}')
     print(f'  Files completed: {len(completed)}')
