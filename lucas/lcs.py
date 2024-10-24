@@ -253,6 +253,19 @@ def _print(args):
     formatter = {'mini': format_mini, 'full': format_full, 'default': format_default}.get(format_type, format_default)
     print(formatter(index))
 
+def _help(args):
+    print("Available commands:")
+    print("  index   - Create or update index for the current directory using lucas.conf settings")
+    print("  query   - Query the codebase with access to index and tools like git_grep, git_log")
+    print("  auto    - Analyze task and automatically select best tools to accomplish it")
+    print("  yolo    - Analyze codebase and generate patches for code improvements")
+    print("  stat    - Show statistics about the index file, optionally show sample summaries")
+    print("           Usage: stat [sample_length]")
+    print("  print   - Print the index in specified format")
+    print("           Usage: print [format]")
+    print("           Available formats: mini, full, default")
+    print("  help    - Show this help message")
+
 def main():
     logging.basicConfig(
         level=logging.INFO,
@@ -265,16 +278,7 @@ def main():
 
     # Add help message for no arguments
     if len(sys.argv) < 2:
-        print("Available commands:")
-        print("  index   - Create or update index for the current directory using lucas.conf settings")
-        print("  query   - Query the codebase with access to index and tools like git_grep, git_log")
-        print("  auto    - Analyze task and automatically select best tools to accomplish it")
-        print("  yolo    - Analyze codebase and generate patches for code improvements")
-        print("  stat    - Show statistics about the index file, optionally show sample summaries")
-        print("           Usage: stat [sample_length]")
-        print("  print   - Print the index in specified format")
-        print("           Usage: print [format]")
-        print("           Available formats: mini, full, default")
+        _help([])
         sys.exit(1)
 
     # Command handling logic
@@ -284,7 +288,8 @@ def main():
         'auto': _auto,
         'yolo': _yolo,
         'stat': _stat,
-        'print': _print
+        'print': _print,
+        'help': _help
     }
 
     command = sys.argv[1]
