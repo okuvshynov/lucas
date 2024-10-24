@@ -229,6 +229,30 @@ def _yolo(args):
     }
     logging.info(yolo(query))
 
+def _print(args):
+    try:
+        with open('lucas.conf', 'r') as f:
+            config = json.load(f)
+    except FileNotFoundError:
+        logging.error("lucas.conf file not found.")
+        return
+    except json.JSONDecodeError:
+        logging.error("lucas.conf contains invalid JSON.")
+        return
+
+    directory = os.getcwd()
+    index_file = os.path.join(directory, 'lucas.idx')
+    if not os.path.isfile(index_file):
+        logging.error(f"The index file '{index_file}' does not exist.")
+        return
+
+    with open(index_file, 'r') as f:
+        index = json.load(f)
+
+    format_type = args[0] if args else 'default'
+    formatter = {'mini': format_mini, 'full': format_full, 'default': format_default}.get(format_type, format_default)
+    print(formatter(index))
+
 def main():
     logging.basicConfig(
         level=logging.INFO,
@@ -243,7 +267,8 @@ def main():
         'query': _query,
         'auto': _auto,
         'yolo': _yolo,
-        'stat': _stat
+        'stat': _stat,
+        'print': _print
     }
 
     if len(sys.argv) < 2:
