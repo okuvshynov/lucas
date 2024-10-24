@@ -262,6 +262,22 @@ def main():
             logging.StreamHandler()
         ]
     )
+
+    # Add help message for no arguments
+    if len(sys.argv) < 2:
+        print("Available commands:")
+        print("  index   - Create or update index for the current directory using lucas.conf settings")
+        print("  query   - Query the codebase with access to index and tools like git_grep, git_log")
+        print("  auto    - Analyze task and automatically select best tools to accomplish it")
+        print("  yolo    - Analyze codebase and generate patches for code improvements")
+        print("  stat    - Show statistics about the index file, optionally show sample summaries")
+        print("           Usage: stat [sample_length]")
+        print("  print   - Print the index in specified format")
+        print("           Usage: print [format]")
+        print("           Available formats: mini, full, default")
+        sys.exit(1)
+
+    # Command handling logic
     commands = {
         'index': _index,
         'query': _query,
@@ -270,10 +286,6 @@ def main():
         'stat': _stat,
         'print': _print
     }
-
-    if len(sys.argv) < 2:
-        logging.error("No command provided")
-        sys.exit(1)
 
     command = sys.argv[1]
     if command not in commands:
