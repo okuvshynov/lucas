@@ -86,15 +86,23 @@ def index_stats(file_name, show_sample=None):
         for k, v in completed.items():
             print(f'\nCompleted file {k}\nSummary: {v["processing_result"][:show_sample]}')
 
-def _index(args):
+def load_config():
+    """Load and return the config from lucas.conf file.
+    
+    Returns:
+        dict: Configuration loaded from lucas.conf
+    """
     try:
         with open('lucas.conf', 'r') as f:
-            config = json.load(f)
+            return json.load(f)
     except FileNotFoundError:
         logging.error("lucas.conf file not found.")
-        return
     except json.JSONDecodeError:
         logging.error("lucas.conf contains invalid JSON.")
+
+def _index(args):
+    config = load_config()
+    if not config:
         return
     # current dir here
     config['dir'] = os.getcwd()
@@ -105,14 +113,8 @@ def _index(args):
     index_stats(config['index_file'])
 
 def _stat(args):
-    try:
-        with open('lucas.conf', 'r') as f:
-            config = json.load(f)
-    except FileNotFoundError:
-        logging.error("lucas.conf file not found.")
-        return
-    except json.JSONDecodeError:
-        logging.error("lucas.conf contains invalid JSON.")
+    config = load_config()
+    if not config:
         return
     
     directory = os.getcwd()
@@ -128,14 +130,8 @@ def _stat(args):
 
 def _auto(args):
     message = args[0]
-    try:
-        with open('lucas.conf', 'r') as f:
-            config = json.load(f)
-    except FileNotFoundError:
-        logging.error("lucas.conf file not found.")
-        return
-    except json.JSONDecodeError:
-        logging.error("lucas.conf contains invalid JSON.")
+    config = load_config()
+    if not config:
         return
 
     directory = os.getcwd()
@@ -168,14 +164,8 @@ def _auto(args):
 
 def _query(args):
     message = args[0]
-    try:
-        with open('lucas.conf', 'r') as f:
-            config = json.load(f)
-    except FileNotFoundError:
-        logging.error("lucas.conf file not found.")
-        return
-    except json.JSONDecodeError:
-        logging.error("lucas.conf contains invalid JSON.")
+    config = load_config()
+    if not config:
         return
 
     directory = os.getcwd()
@@ -209,14 +199,8 @@ def _query(args):
 
 def _yolo(args):
     message = args[0]
-    try:
-        with open('lucas.conf', 'r') as f:
-            config = json.load(f)
-    except FileNotFoundError:
-        logging.error("lucas.conf file not found.")
-        return
-    except json.JSONDecodeError:
-        logging.error("lucas.conf contains invalid JSON.")
+    config = load_config()
+    if not config:
         return
 
     directory = os.getcwd()
@@ -230,14 +214,8 @@ def _yolo(args):
     logging.info(yolo(query))
 
 def _print(args):
-    try:
-        with open('lucas.conf', 'r') as f:
-            config = json.load(f)
-    except FileNotFoundError:
-        logging.error("lucas.conf file not found.")
-        return
-    except json.JSONDecodeError:
-        logging.error("lucas.conf contains invalid JSON.")
+    config = load_config()
+    if not config:
         return
 
     directory = os.getcwd()
