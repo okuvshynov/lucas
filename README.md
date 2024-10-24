@@ -2,6 +2,13 @@
 
 In progress effort to experiment on efficient real-world software engineering tasks resolution.
 
+```
+lcs yolo "Let's log entire json conversation for each client implementation to a separate file. One call to send() should be logged to a separate temp file (persisted, not removed) and full name of this file should be written to normal log. Create a new class ConversationLogger which would handle this and used from every client."
+```
+
+Uses index, tools, generates patches and applies them to automatically produce https://github.com/okuvshynov/lucas/commit/960369fd05788ed22d2db51d545be1997d687c9b
+
+Summary:
 * Focus on making changes to medium-sized codebases, where change is spread across multiple files and project doesn't fit into the context;
 * No autocomplete or generating snake game for 101th time.
 * Human readable indexing with LLMs, which can be debugged and understood - no multidimensional vector stores.
@@ -11,9 +18,11 @@ In progress effort to experiment on efficient real-world software engineering ta
 
 ## Next experiments
 
-* Automated tool generation: https://github.com/okuvshynov/lucas/blob/main/lucas/prompts/auto_tools.txt, https://github.com/okuvshynov/lucas/commit/95f43206e36b5cf9a281f3f08881b9a9a5e3e876 - something similar to CoT but let it produce tools first.
+* Automated tool generation: https://github.com/okuvshynov/lucas/blob/main/lucas/prompts/auto_tools.txt, https://github.com/okuvshynov/lucas/commit/95f43206e36b5cf9a281f3f08881b9a9a5e3e876 - something similar to CoT but let it produce tools first. Chain could look like a) decide which tools are needed b) implement tools c) use tools. With more intermediate steps for testing.
 * Experiment on larger projects and add tools for index exploration.
-* batch processing for local indexing to speed it up
+* test it on swe bench
+* * batch processing for local indexing to speed it up
+
 
 ## Example
 
@@ -66,12 +75,7 @@ lcs query "What different LLM clients are used by this projects?"
 
 Uses index, tools and answers the question.
 
-#### just do the task!
 
-```
-lcs yolo "Let's log entire json conversation for each client implementation to a separate file. One call to send() should be logged to a separate temp file (persisted, not removed) and full name of this file should be written to normal log. Create a new class ConversationLogger which would handle this and used from every client."
-```
-Uses index, tools, generates patches and applies them to automatically produce https://github.com/okuvshynov/lucas/commit/960369fd05788ed22d2db51d545be1997d687c9b
 
 ### Getiing index stats
 
