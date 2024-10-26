@@ -213,6 +213,19 @@ def _yolo(args):
     }
     logging.info(yolo(query))
 
+def _yolof(args):
+    if not args:
+        logging.error("File path is required for yolof command")
+        return
+    filepath = args[0]
+    try:
+        with open(filepath, 'r') as f:
+            message = f.read()
+    except (FileNotFoundError, IOError) as e:
+        logging.error(f"Error reading file {filepath}: {str(e)}")
+        return
+    _yolo([message])
+
 def _print(args):
     config = load_config()
     if not config:
@@ -237,6 +250,8 @@ def _help(args):
     print("  query   - Query the codebase with access to index and tools like git_grep, git_log")
     print("  auto    - Analyze task and automatically select best tools to accomplish it")
     print("  yolo    - Analyze codebase and generate patches for code improvements")
+    print("  yolof   - Like yolo but reads message from a file")
+    print("           Usage: yolof <filepath>")
     print("  stat    - Show statistics about the index file, optionally show sample summaries")
     print("           Usage: stat [sample_length]")
     print("  print   - Print the index in specified format")
@@ -265,6 +280,7 @@ def main():
         'query': _query,
         'auto': _auto,
         'yolo': _yolo,
+        'yolof': _yolof,
         'stat': _stat,
         'print': _print,
         'help': _help
