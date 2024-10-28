@@ -10,7 +10,7 @@ Uses index, tools, generates patches and applies them to automatically produce h
 
 Summary:
 * Focus on making changes to medium-sized codebases, where change is spread across multiple files and project doesn't fit into the context;
-* No autocomplete or generating snake game for 101th time.
+* No autocomplete or generating snake game for 101st time.
 * Human readable indexing with LLMs, which can be debugged and understood - no multidimensional vector stores.
 * Focus on patch generation/application, not generating entire files from scratch to improve cost/latency.
 * Support for local models (llama.cpp server) and remote LLM providers (claude, mistral, groq, cerebras).
