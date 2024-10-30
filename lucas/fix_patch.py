@@ -61,7 +61,9 @@ def fix_patch(patch_content):
         fixed_header = f'@@ -{current_hunk_line},{current_hunk_size} +{new_hunk_start},{new_hunk_size} @@{rest_of_header}'
         fixed_lines[current_hunk_start] = fixed_header
 
-    return '\n'.join(fixed_lines)
+    res = '\n'.join(fixed_lines)
+    res = res + '\n'
+    return res
 
 def save_failed_patch(patch_content):
     """Save a failed patch to a temporary file and log its location."""

@@ -117,9 +117,12 @@ class Indexer:
         save_index(file_index, old_dir_index, self.index_file)
 
     def count_tokens(self, files):
+        total_tokens = 0
         for k, v in files.items():
             with open(os.path.join(self.directory, k), 'r') as f:
                 v['approx_tokens'] = self.token_counter(f.read())
+                total_tokens += v['approx_tokens']
+        return total_tokens
 
     def run(self) -> FileEntryList:
         file_index, old_dir_index = load_index(self.index_file)
@@ -130,7 +133,8 @@ class Indexer:
         for file in to_process:
             results[file["path"]] = file
 
-        self.count_tokens(results)
+        tokens = self.count_tokens(results)
+        logging.info(f'Approximately {tokens} to process')
         
         save_index(results, old_dir_index, self.index_file)
 

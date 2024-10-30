@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import shutil
+import sys
 import subprocess
 import tempfile
 from datasets import load_dataset
@@ -12,10 +13,12 @@ from datasets import load_dataset
 from lucas.indexer import Indexer
 from lucas.yolo import gen_patches
 
-def reorganize_dataset(dataset):
+def reorganize_dataset(dataset, instance_ids):
     reorganized = {}
     
     for item in dataset:
+        if instance_ids and item['instance_id'] not in instance_ids:
+            continue
         repo = item['repo']
         
         # Create entry for new repository
@@ -33,11 +36,11 @@ def reorganize_dataset(dataset):
     
     return reorganized
 
-def prepare_data():
+def prepare_data(instance_ids):
     ds = load_dataset("princeton-nlp/SWE-bench_Lite")
     dev_split = ds['dev']
 
-    return reorganize_dataset(dev_split)
+    return reorganize_dataset(dev_split, instance_ids)
 
 def get_config():
     return {
@@ -65,10 +68,13 @@ def main():
             logging.StreamHandler()
         ]
     )
-    data = prepare_data()
 
-    out_patches = []
-    
+    instance_ids = []
+    if len(sys.argv) > 1:
+        instance_ids = sys.argv[1:]
+
+    data = prepare_data(instance_ids)
+
     # TODO: gen dir
     # working_dir = os.path.join(tempfile.gettempdir(), f"lucas_swebench")
     working_dir = "/tmp/lucas_swebench/"
@@ -114,16 +120,14 @@ def main():
             }
 
             patches = gen_patches(query)
-            out_patches.append({
+            out_patches = [{
                 "instance_id": task["instance_id"],
                 "model_patch": '\n'.join(patches.values()),
                 "model_name_or_path": "lucas|sonnet3.5"
-            })
+            }]
 
-            out = json.dumps(out_patches, indent=4)
-
-            print(f'{out}')
-            exit(0)
+            with open(os.path.join(working_dir, f'{task["instance_id"]}_patch.json'), 'w') as f:
+                json.dump(out_patches, f, indent=4)
 
 if __name__ == '__main__':
     main()
