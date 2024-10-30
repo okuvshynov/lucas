@@ -1,6 +1,7 @@
 # this is a script to get swebench data and run one or more 
 # challenges
 
+import json
 import logging
 import os
 import shutil
@@ -9,6 +10,7 @@ import tempfile
 from datasets import load_dataset
 
 from lucas.indexer import Indexer
+from lucas.yolo import gen_patches
 
 def reorganize_dataset(dataset):
     reorganized = {}
@@ -45,7 +47,8 @@ def get_config():
             "type": "ClaudeClient",
             "model": "claude-3-5-sonnet-20241022",
             "max_tokens": 8192,
-            "tokens_rate": 200000,
+            "tokens_rate": 50000,
+            "period": 60,
             "cache": "ephemeral"
         },
         "crawler": {"includes": "*.py", "traverse": "git"},
@@ -63,7 +66,12 @@ def main():
         ]
     )
     data = prepare_data()
-    working_dir = os.path.join(tempfile.gettempdir(), f"lucas_swebench")
+
+    out_patches = []
+    
+    # TODO: gen dir
+    # working_dir = os.path.join(tempfile.gettempdir(), f"lucas_swebench")
+    working_dir = "/tmp/lucas_swebench/"
     os.makedirs(working_dir, exist_ok=True)
     for repo, tasks in data.items():
         logging.info(f'cloning repository {repo}')
@@ -92,13 +100,30 @@ def main():
             conf = get_config()
             conf['dir'] = repo_dir
             # TODO: index reuse
-            conf['index_file'] = os.path.join(repo_dir, 'lucas.idx')
+            conf['index_file'] = os.path.join(working_dir, f'{task["instance_id"]}.idx')
             indexer = Indexer(conf)
             indexer.run()
             # Print index stats after indexing is complete
-            index_stats(conf['index_file'])
 
             logging.info('indexing done. running query.')
+            query = {
+                'directory': repo_dir,
+                'message': task["problem_statement"],
+                'index_file': conf['index_file'],
+                'client': conf['query_client']
+            }
+
+            patches = gen_patches(query)
+            out_patches.append({
+                "instance_id": task["instance_id"],
+                "model_patch": '\n'.join(patches.values()),
+                "model_name_or_path": "lucas|sonnet3.5"
+            })
+
+            out = json.dumps(out_patches, indent=4)
+
+            print(f'{out}')
+            exit(0)
 
 if __name__ == '__main__':
     main()

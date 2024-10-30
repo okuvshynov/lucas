@@ -16,9 +16,8 @@ from lucas.fix_patch import fix_patch, save_failed_patch
 
 def apply_patch(file_path, patch_content):
     try:
-        content = fix_patch(patch_content)
         patch_cmd = ['patch', '-V', 'none', '--force', '--ignore-whitespace', file_path]
-        result = subprocess.run(patch_cmd, input=content, text=True, capture_output=True, check=True)
+        result = subprocess.run(patch_cmd, input=patch_content, text=True, capture_output=True, check=True)
         return True
     except subprocess.CalledProcessError as e:
         logging.error(f"Error applying patch for {file_path}")
@@ -43,9 +42,9 @@ def parse_patch_file(content):
             patch_content = content_match.group(1).strip()
             patch_dict[file_path] = patch_content
 
-    return patch_dict
+    return patch_dict.items()
 
-def yolo(query):
+def gen_patches(query):
     logging.info(query)
     codebase_path = os.path.expanduser(query['directory'])
     if 'index_file' in query:
@@ -78,14 +77,24 @@ def yolo(query):
 
     if reply is None:
         logging.error('YOLO failed.')
-        return None
+        return {}
 
-    patches = parse_patch_file(reply)
+    print(reply)
+    patches = {}
+    for path, patch in parse_patch_file(reply):
+        patches[path] = fix_patch(patch)
+
+    return patches
+
+def yolo(query):
+    codebase_path = os.path.expanduser(query['directory'])
+    patches = gen_patches(query)
     applied = 0
     i = 0
 
     for path, patch in patches.items():
         ok = apply_patch(os.path.join(codebase_path, path), patch)
+        # TODO: use mktemp
         with open(f'/tmp/patches/{i}.patch', 'w') as f:
             f.write(patch)
         i += 1
