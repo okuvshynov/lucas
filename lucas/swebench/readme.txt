@@ -15,8 +15,9 @@ Interesting:
     * https://www.anthropic.com/research/swe-bench-sonnet
 
 What should we do? 
-1. Go one by one and check how we could resolve it
-2. Indexing with haiku 3.5
-3. Understand patch application - is just replacing better than producing patches
-4. Indexing git history
-5. Tool exploration
+[ ] Go one by one and check how we could resolve it
+[ ] Indexing with haiku 3.5
+[ ] Understand patch application - is just replacing better than producing patches -- seems so.
+[ ] Indexing git history
+[ ] Tool exploration - ask agent to build a tool it needs.
+[ ] debugger tool. Ask to reproduce the bug, then put a tracepoint and iterate.
