@@ -119,11 +119,22 @@ def main():
                 'client': conf['query_client']
             }
 
-            patches = gen_patches(query)
+            gen_patches(query)
+
+            patches = subprocess.run(
+                ['git', 'diff', '--patch'],
+                capture_output=True,
+                text=True,
+                check=True,
+                cwd=repo_dir
+            )
+
+            logging.info('got patches')
+
             out_patches = [{
                 "instance_id": task["instance_id"],
-                "model_patch": '\n'.join(patches.values()),
-                "model_name_or_path": "lucas|sonnet3.5"
+                "model_patch": patches.stdout,
+                "model_name_or_path": "lucas.sonnet3.5"
             }]
 
             with open(os.path.join(working_dir, f'{task["instance_id"]}_patch.json'), 'w') as f:

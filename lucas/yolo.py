@@ -63,7 +63,7 @@ def gen_patches(query):
 
     script_dir = os.path.dirname(__file__)
 
-    with open(os.path.join(script_dir, 'prompts', 'yolo.txt')) as f:
+    with open(os.path.join(script_dir, 'prompts', 'yolo2.txt')) as f:
         prompt = f.read()
 
     message = query['message']
@@ -75,20 +75,12 @@ def gen_patches(query):
 
     reply = client.send(user_message, toolset)
 
-    if reply is None:
-        logging.error('YOLO failed.')
-        return {}
-
     print(reply)
-    patches = {}
-    for path, patch in parse_patch_file(reply):
-        patches[path] = fix_patch(patch)
-
-    return patches
 
 def yolo(query):
     codebase_path = os.path.expanduser(query['directory'])
     patches = gen_patches(query)
+    return "attempted yolo"
     applied = 0
     i = 0
 

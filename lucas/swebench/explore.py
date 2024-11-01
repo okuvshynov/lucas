@@ -3,26 +3,25 @@ import logging
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 from datasets import load_dataset
 
 def load():
-    ds = load_dataset("princeton-nlp/SWE-bench_Verified")
-    return ds['test']
+    ds = load_dataset("princeton-nlp/SWE-bench_Lite")
+    return ds['dev']
 
 def main():
     data = load()
     notes = {}
+    instance_ids = sys.argv[1:]
     for item in data:
+        if instance_ids and item['instance_id'] not in instance_ids:
+            continue
         print('-------------------------------------------------')
         print(item['instance_id'])
         print(item['problem_statement'])
         print(item['patch'])
-        note = input("Which tools would be needed to resolve it: ")
-        notes[item['instance_id']] = note
-        with open('swe_notes.json', 'w') as f:
-            json.dump(notes, f)
-
 
 if __name__ == '__main__':
     main()
