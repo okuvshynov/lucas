@@ -58,12 +58,18 @@ class EditFileTool:
         }
 
     def run(self, tool_use_args):
-        logging.debug(f'running edit_file({tool_use_args})')
-        res = []
+        logging.info(f'Edit file {tool_use_args["filepath"]}')
         path = tool_use_args['filepath']
         path = os.path.join(self.root, path)
         needle = tool_use_args['needle']
         replacement = tool_use_args['replacement']
+        logging.debug('-----------------')
+        logging.debug('Replacing needle:')
+        logging.debug(needle)
+        logging.debug('-----------------')
+        logging.debug('With replacement')
+        logging.debug(replacement)
+
         try:
             with open(path, 'r') as file:
                 content = file.read()

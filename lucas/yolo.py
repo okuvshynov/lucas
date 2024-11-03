@@ -44,7 +44,7 @@ def parse_patch_file(content):
 
     return patch_dict.items()
 
-def gen_patches(query):
+def run_patches(query):
     logging.info(query)
     codebase_path = os.path.expanduser(query['directory'])
     if 'index_file' in query:
@@ -73,24 +73,9 @@ def gen_patches(query):
     client = client_factory(query['client'])
     toolset = Toolset(codebase_path)
 
-    reply = client.send(user_message, toolset)
-
-    print(reply)
+    final_reply = client.send(user_message, toolset)
+    logging.info(final_reply)
 
 def yolo(query):
-    codebase_path = os.path.expanduser(query['directory'])
-    patches = gen_patches(query)
-    return "attempted yolo"
-    applied = 0
-    i = 0
-
-    for path, patch in patches.items():
-        ok = apply_patch(os.path.join(codebase_path, path), patch)
-        # TODO: use mktemp
-        with open(f'/tmp/patches/{i}.patch', 'w') as f:
-            f.write(patch)
-        i += 1
-        if ok:
-            applied += 1
-
-    return f'received {len(patches)} patches, applied {applied}.'
+    run_patches(query)
+    return "Ran YOLO"

@@ -11,7 +11,7 @@ import tempfile
 from datasets import load_dataset
 
 from lucas.indexer import Indexer
-from lucas.yolo import gen_patches
+from lucas.yolo import run_patches
 
 def reorganize_dataset(dataset, instance_ids):
     reorganized = {}
@@ -119,7 +119,7 @@ def main():
                 'client': conf['query_client']
             }
 
-            gen_patches(query)
+            run_patches(query)
 
             patches = subprocess.run(
                 ['git', 'diff', '--patch'],
