@@ -13,6 +13,15 @@ python -m swebench.harness.run_evaluation \
 
 Interesting:
     * https://www.anthropic.com/research/swe-bench-sonnet
+    * https://github.com/All-Hands-AI/OpenHands?tab=readme-ov-file#-how-to-contribute
+
+Process should be:
+1. Prepare the plan specific to the repository.
+2. Build a script to reproduce error
+3. Ask 'which tools might be useful'. Build these tools.
+4. Do a first attempt.
+5. Verify it worked. -- reset the context here??
+6. If it didn't use debugger?
 
 What should we do? 
 [ ] Go one by one and check how we could resolve it
