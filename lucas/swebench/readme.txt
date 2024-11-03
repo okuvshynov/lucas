@@ -30,3 +30,13 @@ What should we do?
 [ ] Indexing git history
 [ ] Tool exploration - ask agent to build a tool it needs.
 [ ] debugger tool. Ask to reproduce the bug, then put a tracepoint and iterate.
+
+3. Good examples:
+
+3.1 lite.dev
+
+[ ] sqlfluff__sqlfluff-1733 -- need to understand how three rules work together.
+
+3.2 verified.test
+
+[ ] 

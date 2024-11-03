@@ -36,11 +36,16 @@ def reorganize_dataset(dataset, instance_ids):
     
     return reorganized
 
-def prepare_data(instance_ids):
-    ds = load_dataset("princeton-nlp/SWE-bench_Lite")
-    dev_split = ds['dev']
+ds_map = {
+    'lite.dev': ("princeton-nlp/SWE-bench_Lite", "dev"),
+    'verified': ("princeton-nlp/SWE-bench_Verified", "test"),
+}
 
-    return reorganize_dataset(dev_split, instance_ids)
+def prepare_data(dsid, instance_ids):
+    name, split = ds_map.get(dsid)
+    ds = load_dataset(name)
+
+    return reorganize_dataset(ds[split], instance_ids)
 
 def get_config():
     return {
@@ -73,7 +78,7 @@ def main():
     if len(sys.argv) > 1:
         instance_ids = sys.argv[1:]
 
-    data = prepare_data(instance_ids)
+    data = prepare_data('verified', instance_ids)
 
     # TODO: gen dir
     # working_dir = os.path.join(tempfile.gettempdir(), f"lucas_swebench")
