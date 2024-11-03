@@ -124,6 +124,20 @@ class Indexer:
                 total_tokens += v['approx_tokens']
         return total_tokens
 
+    def get_index_stats(self, index):
+        total_files = len(index)
+        processed_files = len([f for f in index.values() if "processing_result" in f])
+        skipped_files = len([f for f in index.values() if f.get("skipped", False)])
+        total_size = sum(f.get("size", 0) for f in index.values())
+        total_tokens = sum(f.get("approx_tokens", 0) for f in index.values())
+        return {
+            "total_files": total_files,
+            "processed_files": processed_files,
+            "skipped_files": skipped_files,
+            "total_size_bytes": total_size,
+            "total_tokens": total_tokens
+        }
+
     def run(self) -> FileEntryList:
         file_index, old_dir_index = load_index(self.index_file)
         to_process, to_reuse = self.crawler.run(file_index)
@@ -148,6 +162,8 @@ class Indexer:
             logging.info(f'processed files: {chunk_context.files}')
             logging.info(f'files missing: {chunk_context.missing_files}')
             logging.info(f'metrics: {chunk_context.metadata}')
+            stats = self.get_index_stats(results)
+            logging.info(f'Current index stats: {json.dumps(stats, indent=2)}')
         
         ## now aggregate directories
         dir_tree = self.create_directory_structure(results)
@@ -163,4 +179,14 @@ class Indexer:
         
         # now we need to save new dir index (as old index might contain deleted nodes).
         save_index(results, dir_index, self.index_file)
+
+        # Print final stats for both files and directories
+        file_stats = self.get_index_stats(results)
+        dir_stats = {
+            "total_directories": len(dir_index),
+            "processed_directories": len([d for d in dir_index.values() if "processing_result" in d]),
+            "skipped_directories": len([d for d in dir_index.values() if d.get("skipped", False)])
+        }
+        logging.info(f'Final file stats: {json.dumps(file_stats, indent=2)}')
+        logging.info(f'Directory stats: {json.dumps(dir_stats, indent=2)}')
 
