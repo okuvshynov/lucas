@@ -18,22 +18,12 @@ Each directory will have a summary, all files will be listed.
 You will be given your task in <task></task> tags.
 
 You will have access to several tools:
-- get_files: tool to get content of the files you need to accomplish that task.
-- git_grep: tool to find the references/uses of a symbol in a codebase.
-- git_log: tool to find a symbol in commit history, not in the current state only. Useful to find when some functionality was introduced and why.
-- git_show: tool to show the content of the commit by its id. Useful to show the content of some commits returned by git_log
+- get_files: tool to get content of the files you need to accomplish that task;
+- git_grep: tool to find the references/uses of a symbol in a codebase;
+- git_log: tool to find a symbol in commit history, not in the current state only. Useful to find when some functionality was introduced and why;
+- git_show: tool to show the content of the commit by its id. Useful to show the content of some commits returned by git_log;
+- edit_file: tool to replace potentially multi-line strings in files. You must use this tool to do all the edits to resolve the task.
 
-Use the summaries provided to identify the files you need. Feel free to use tools more than once if you discovered that you need more information. Avoid calling the tool with the same arguments, reuse previous tool responses.
+Use the summaries provided to identify the files you need. Feel free to use tools more than once if you discovered that you need more information.
 
-Provide your output as individual diff files I can apply with patch command without relying on version control system.
-
-In your final response, you need to include all the changes you need to make to the repository, including new files and modifications to existing files. It must be formatted in xml-like format:
-<patches>
-    <patch>
-        <file>path_to_new_or_changed_file</file>
-        <content>content of a patch in a format understood by 'patch' tool</content>
-    </patch>
-    ...
-</patches>
-
-
+Your final response should include the number of edits you make.

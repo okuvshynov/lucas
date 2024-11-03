@@ -63,7 +63,10 @@ class Crawler:
             if self.should_process(relative_path):
                 logging.debug(f'processing {relative_path}')
                 full_path = os.path.join(self.root, relative_path)
-                file_info = get_file_info(full_path, self.root)
+                if os.path.exists(full_path):
+                    file_info = get_file_info(full_path, self.root)
+                else:
+                    file_info = None
                 if file_info is None:
                     continue
                 if relative_path in prev_index and prev_index[relative_path]["checksum"] == file_info["checksum"] and "processing_result" in prev_index[relative_path]:

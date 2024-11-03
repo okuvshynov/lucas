@@ -12,37 +12,6 @@ import subprocess
 from lucas.llm_client import client_factory
 from lucas.index_format import format_default
 from lucas.tools.toolset import Toolset
-from lucas.fix_patch import fix_patch, save_failed_patch
-
-def apply_patch(file_path, patch_content):
-    try:
-        patch_cmd = ['patch', '-V', 'none', '--force', '--ignore-whitespace', file_path]
-        result = subprocess.run(patch_cmd, input=patch_content, text=True, capture_output=True, check=True)
-        return True
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Error applying patch for {file_path}")
-        save_failed_patch(patch_content)
-
-    return False
-
-def parse_patch_file(content):
-    # Create a dictionary to store the results
-    patch_dict = {}
-
-    # Use regex to find all patches
-    patches = re.findall(r'<patch>(.*?)</patch>', content, re.DOTALL)
-
-    for patch in patches:
-        # Extract file path and content for each patch
-        file_match = re.search(r'<file>(.*?)</file>', patch, re.DOTALL)
-        content_match = re.search(r'<content>(.*?)</content>', patch, re.DOTALL)
-
-        if file_match and content_match:
-            file_path = file_match.group(1).strip()
-            patch_content = content_match.group(1).strip()
-            patch_dict[file_path] = patch_content
-
-    return patch_dict.items()
 
 def run_patches(query):
     logging.info(query)
@@ -63,7 +32,7 @@ def run_patches(query):
 
     script_dir = os.path.dirname(__file__)
 
-    with open(os.path.join(script_dir, 'prompts', 'yolo2.txt')) as f:
+    with open(os.path.join(script_dir, 'prompts', 'yolo.txt')) as f:
         prompt = f.read()
 
     message = query['message']
