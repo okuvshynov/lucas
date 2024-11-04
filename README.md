@@ -41,7 +41,7 @@ create `lucas.conf` with content:
 ```
 {
     "chunk_size": 4096,
-    "llm_client": {"type": "LocalClient", "endpoint": "http://localhost:8080/v1/chat/completions", "max_req_size" : 65536},
+    "index_client": {"type": "LocalClient", "endpoint": "http://localhost:8080/v1/chat/completions", "max_req_size" : 65536},
     "query_client": {
         "type": "ClaudeClient",
         "model": "claude-3-5-sonnet-20241022",
@@ -138,7 +138,7 @@ First, you create configuration file (lucas.conf) :
 ```
 {
     "chunk_size": 4096,
-    "llm_client": {"type": "GroqClient"},
+    "index_client": {"type": "GroqClient"},
     "query_client": {
         "type": "ClaudeClient",
         "model": "claude-3-5-sonnet-20240620",
@@ -152,8 +152,8 @@ First, you create configuration file (lucas.conf) :
 ```
 
 We need to configure two separate llm clients:
-1. llm_client - used for indexing. Can be slightly weaker model, as it will process entire codebase. It is using Groq API as an example, but can be local models as well.
-2. query_client - this is the bot which will use tools and try to complete the task. I use a stronger model here.
+1. `index_client` - used for indexing. Can be slightly weaker model, as it will process entire codebase. It is using Groq API as an example, but can be local models as well.
+2. `query_client` - this is the bot which will use tools and try to complete the task. I use a stronger model here.
 
 Install locally:
 

@@ -19,7 +19,7 @@ from lucas.utils import load_index, save_index, chunk_tasks
 
 class Indexer:
     def __init__(self, config):
-        self.client = client_factory(config['llm_client'])
+        self.client = client_factory(config['index_client'])
         self.token_counter = token_counter_factory(config['token_counter'])
         self.chunk_size = config['chunk_size']
         self.directory = os.path.expanduser(config['dir'])

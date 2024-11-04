@@ -50,7 +50,11 @@ def prepare_data(dsid, instance_ids):
 def get_config():
     return {
         "chunk_size": 4096,
-        "llm_client": {"type": "LocalClient", "endpoint": "http://localhost:8080/v1/chat/completions", "max_req_size" : 65536},
+        "index_client": {
+            "type": "LocalClient",
+            "endpoint": "http://localhost:8080/v1/chat/completions",
+            "max_req_size" : 65536
+        },
         "query_client": {
             "type": "ClaudeClient",
             "model": "claude-3-5-sonnet-20241022",
