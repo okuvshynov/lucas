@@ -15,6 +15,12 @@ from lucas.stats import bump
 from lucas.conversation_logger import ConversationLogger
 
 pricing_usd_1m = {
+    'claude-3-5-haiku-20241022': {
+        'input_tokens': 1.0,
+        'cache_creation_input_tokens': 1.25,
+        'cache_read_input_tokens': 0.1,
+        'output_tokens': 5.0
+    },
     'claude-3-5-sonnet-20241022' : {
         'input_tokens': 3.0,
         'cache_creation_input_tokens': 3.75,
