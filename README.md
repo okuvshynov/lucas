@@ -188,3 +188,17 @@ Uses index, tools and answers the question.
 lcs stat
 ```
 Shows size of the index (files, dirs, tokens).
+
+
+
+
+#### Docker
+
+Not sure yet how should I set it up, but something like 
+```
+docker build -t lucas_swebench2 .
+docker run -e GITHUB_REPO="https://github.com/okuvshynov/lucas.git" -e COMMIT_HASH="e08a5145c13940c59bd4021346dbd5bd069a6813" lucas_swebench
+```
+
+
+
