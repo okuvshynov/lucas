@@ -79,10 +79,13 @@ def main():
     )
 
     instance_ids = []
-    if len(sys.argv) > 1:
-        instance_ids = sys.argv[1:]
 
-    data = prepare_data('verified', instance_ids)
+    ds = sys.argv[1]
+
+    if len(sys.argv) > 2:
+        instance_ids = sys.argv[2:]
+
+    data = prepare_data(ds, instance_ids)
 
     # TODO: gen dir
     # working_dir = os.path.join(tempfile.gettempdir(), f"lucas_swebench")
