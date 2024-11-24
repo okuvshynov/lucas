@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e  # Exit on any error
 
+## setup dependencies for getting the data
+
+pip3 install datasets
+
 # Expected environment variables
 # GITHUB_REPO: URL of the repository
 # COMMIT_HASH: Specific commit to checkout

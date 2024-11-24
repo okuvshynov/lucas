@@ -1,5 +1,8 @@
 Example run:
 
+0. docker run:
+docker run -e GITHUB_REPO="https://github.com/okuvshynov/lucas.git" -e COMMIT_HASH="e08a5145c13940c59bd4021346dbd5bd069a6813" lucas_swebench
+
 1. Run one specific task:
 python -m lucas.swebench.swebench sqlfluff__sqlfluff-2419
 
@@ -40,3 +43,5 @@ What should we do?
 3.2 verified.test
 
 [ ] 
+
+
