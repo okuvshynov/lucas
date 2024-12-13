@@ -5,6 +5,7 @@ from lucas.tools.git_grep import GitGrepTool
 from lucas.tools.git_log import GitLogTool
 from lucas.tools.git_show import GitShowTool
 from lucas.tools.edit_file import EditFileTool
+from lucas.tools.create_file import CreateFileTool
 from lucas.stats import bump
 
 class Toolset:
@@ -14,7 +15,8 @@ class Toolset:
             GitGrepTool(working_dir),
             GitLogTool(working_dir),
             GitShowTool(working_dir),
-            EditFileTool(working_dir)
+            EditFileTool(working_dir),
+            CreateFileTool(working_dir),
         ]
 
     def definitions(self):

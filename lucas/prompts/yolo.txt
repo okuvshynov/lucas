@@ -23,6 +23,7 @@ You will have access to several tools:
 - git_log: tool to find a symbol in commit history, not in the current state only. Useful to find when some functionality was introduced and why;
 - git_show: tool to show the content of the commit by its id. Useful to show the content of some commits returned by git_log;
 - edit_file: tool to replace potentially multi-line strings in files. You must use this tool to do all the edits to resolve the task.
+- create_file: tool to create new file with provided content.
 
 Use the summaries provided to identify the files you need. Feel free to use tools more than once if you discovered that you need more information.
 
