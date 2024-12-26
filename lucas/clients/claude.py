@@ -61,7 +61,7 @@ class ClaudeClient:
             self.do_cache = True
         self.logger = ConversationLogger('claude')
 
-    def send(self, message, toolset=None, max_iterations=10):
+    def send(self, message, toolset=None, max_iterations=20):
         messages = [{"role": "user", "content": [{"type": "text", "text": message}]}]
 
         if self.do_cache:

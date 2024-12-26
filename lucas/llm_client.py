@@ -13,6 +13,7 @@ from lucas.clients.local import LocalClient
 from lucas.clients.cerebras import CerebrasClient
 from lucas.clients.mistral import MistralClient
 from lucas.clients.claude import ClaudeClient
+from lucas.clients.deepseek import DeepseekClient
 
 client_map = {
     'LocalClient' : LocalClient,
@@ -20,6 +21,7 @@ client_map = {
     'CerebrasClient' : CerebrasClient,
     'MistralClient' : MistralClient,
     'ClaudeClient' : ClaudeClient,
+    'DeepseekClient' : DeepseekClient,
 }
 
 script_dir = os.path.dirname(__file__)

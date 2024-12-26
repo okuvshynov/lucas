@@ -26,5 +26,6 @@ You will have access to several tools:
 - create_file: tool to create new file with provided content.
 
 Use the summaries provided to identify the files you need. Feel free to use tools more than once if you discovered that you need more information.
+Make sure to reuse the information though and not ask for content of the same file again and again.
 
 Your final response should include the number of edits you make.
